@@ -6,9 +6,9 @@ export class EmployeeController {
           
           router.get('/',this.getAllEmployees);
           router.get('/:id',this.getSingleEmployee.bind(this))
-          router.delete('/',this.deleteEmployee.bind(this))
-          router.put('/',this.updateEmployeeDetails.bind(this))
-          router.put('/',this.createEmployee)
+          router.delete('/:id',this.deleteEmployee.bind(this))
+          router.put('/:id',this.updateEmployeeDetails.bind(this))
+          router.post('/',this.createEmployee)
      }
      createEmployee = async(req:Request,res:Response)=>{
           const email = req.body.email;
