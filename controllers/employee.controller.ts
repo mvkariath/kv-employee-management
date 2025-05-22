@@ -19,11 +19,13 @@ export class EmployeeController{
     }
     async createEmployee(req,res,next){
         try{
-        const requiredFields = ['email','name','age','address'];
+        const requiredFields = ['email','name','age','address','password'];
         const data = req.body
         const createEmployeeDto = plainToInstance(CreateEmployeeDto,data);
         const err = await validate(createEmployeeDto); 
+    
         if (err.length>0){
+            console.log(err)
             throw new HttpException(400,"Invalid input");
         }
         if (!isEmailValid(data.email)){
@@ -31,7 +33,7 @@ export class EmployeeController{
         }
         const fieldsPassed = Object.keys(data)
         if (requiredFields.every(field=>fieldsPassed.includes(field))){
-            const employee = await this.employeeService.createEmployee(createEmployeeDto.name,createEmployeeDto.email,createEmployeeDto.age,createEmployeeDto.address);
+            const employee = await this.employeeService.createEmployee(createEmployeeDto.name,createEmployeeDto.email,createEmployeeDto.age,createEmployeeDto.password,createEmployeeDto.address);
             res.status(201).send(employee);
         }}
         catch(error){

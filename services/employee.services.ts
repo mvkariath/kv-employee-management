@@ -9,7 +9,7 @@ export class EmployeeService{
     constructor(private employeeRepository:EmployeeRepository){
 
     }
-    async createEmployee(name:string,email:string,age:number,address:CreateAddressDto):Promise<Employee>{
+    async createEmployee(name:string,email:string,age:number,password:string,address:CreateAddressDto):Promise<Employee>{
         // const addr = new Address();
         // addr.line1 = address.line1;
         // addr.pincode = address.pincode;
@@ -17,6 +17,8 @@ export class EmployeeService{
         employee.name = name;
         employee.email = email;
         employee.age = age;
+        employee.password = password;
+
         employee.address = address as Address;
         return this.employeeRepository.create(employee);
     }
