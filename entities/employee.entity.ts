@@ -14,7 +14,9 @@ class Employee extends AbstractEntity {
 
     @Column()
     name: string;
-    
+
+    @Column()
+    password:string;
 
     @OneToOne(()=>Address,(address)=>address.employee,{
       cascade:true,
