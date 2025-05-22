@@ -1,4 +1,4 @@
-
+import bcrypt from 'bcrypt'
 import { CreateAddressDto } from '../dto/create-addres.dto';
 import { UpdateEmployeeDto } from '../dto/update-employee.dto';
 import Address from '../entities/address.entity';
@@ -17,7 +17,7 @@ export class EmployeeService{
         employee.name = name;
         employee.email = email;
         employee.age = age;
-        employee.password = password;
+        employee.password = await bcrypt.hash(password,10);
 
         employee.address = address as Address;
         return this.employeeRepository.create(employee);
