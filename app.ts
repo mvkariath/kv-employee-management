@@ -1,49 +1,37 @@
-import express from "express";
-import employeeRouter from "./routes/employee.route";
-import datasource from "./db/data-source";
-import loggerMiddleware from "./loggerMiddleware";
-
-import { Client } from "pg";
-
+import express, { Request, Response } from "express";
+// import employeeRouter from "./employee_router";
+// import loggerMiddleware from "./loggerMiddleware";
+// import { processTimeMiddleware } from "./processTimeMiddleware";
+import  datasource from "./db/data-source";
+import employeeRouter from './routers/employee.router'
+import loggerMiddleware from "./middleware/loggerMiddleware";
+import processTimeMiddleware from "./middleware/processTimeMiddleware";
+import errorMiddleware from "./middleware/errorMiddleware";
 
 const server = express();
 server.use(express.json());
 server.use(loggerMiddleware);
+server.use(processTimeMiddleware);
 
 server.use("/employee", employeeRouter);
+server.use(errorMiddleware);
 
-server.get("/", (req, res) => {
-  console.log(req.url);
-  res.status(200).send("Hello world typescript");
+server.get("/", (req: Request, res: Response) => {
+  res.status(200).send("Hello world");
 });
-
-// Database connection configuration - without orm
-// const dbConfig = {
-//   user: 'postgres',
-//   password: 'postgres',
-//   host: 'localhost',
-//   port: 5433,
-//   database: 'training',
-// };
-
-(async()=>{
+(async ()=>{
   try{
-    await datasource.initialize()
-    console.log("Connected to the DB!!")
+    await datasource.initialize();
+    console.log("connected")
   }
   catch{
-    console.error('Failed to connect to the DB');
-    process.exit(1);
+    console.error("Failed");
+    process.exit();
   }
   server.listen(3000, () => {
-  console.log("server listening to 3000");
-});
-
-
-})()
-
-
-
+    console.log("server listening to 3000");
+  });
+})();
 
 
 
