@@ -64,4 +64,8 @@ export class EmployeeService{
     async removeEmployeeById(employee:Employee):Promise<void>{
         await this.employeeRepository.remove(employee);
     }
+
+    async getEmployeeByEmail(email:string){
+        return this.employeeRepository.findOneByEmail(email);
+    }
 }

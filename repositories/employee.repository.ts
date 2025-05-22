@@ -36,6 +36,11 @@ class EmployeeRepository{
     async remove(employee:Employee):Promise<Employee>{
         return this.repository.remove(employee);
     }
+    async findOneByEmail(email:string){
+        return this.repository.findOne({
+           where:{ email:email},
+        })
+    }
 
 }
 export default EmployeeRepository;

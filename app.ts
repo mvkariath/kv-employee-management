@@ -7,12 +7,13 @@ import employeeRouter from './routers/employee.router'
 import loggerMiddleware from "./middleware/loggerMiddleware";
 import processTimeMiddleware from "./middleware/processTimeMiddleware";
 import errorMiddleware from "./middleware/errorMiddleware";
+import authRouter from "./routers/auth.router";
 
 const server = express();
 server.use(express.json());
 server.use(loggerMiddleware);
 server.use(processTimeMiddleware);
-
+server.use('/login',authRouter)
 server.use("/employee", employeeRouter);
 server.use(errorMiddleware);
 
