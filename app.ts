@@ -8,13 +8,17 @@ import loggerMiddleware from "./middleware/loggerMiddleware";
 import processTimeMiddleware from "./middleware/processTimeMiddleware";
 import errorMiddleware from "./middleware/errorMiddleware";
 import authRouter from "./routers/auth.router";
+import { authMiddleware } from "./middleware/auth.middleware";
 
 const server = express();
+
 server.use(express.json());
 server.use(loggerMiddleware);
 server.use(processTimeMiddleware);
+
 server.use('/login',authRouter)
-server.use("/employee", employeeRouter);
+server.use("/employee", authMiddleware,employeeRouter);
+
 server.use(errorMiddleware);
 
 server.get("/", (req: Request, res: Response) => {

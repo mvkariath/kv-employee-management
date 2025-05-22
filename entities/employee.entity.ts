@@ -2,7 +2,12 @@ import { Entity, Column, ForeignKey, OneToOne, JoinColumn, ManyToOne} from "type
 import AbstractEntity from "./abstract.entity";
 import Address from "./address.entity";
 import { Department } from "./department.entity";
-
+export enum EmployeeRole{
+  UI = 'UI',
+  UX = 'UX',
+  DEVELOPER = 'DEVELOPER',
+  HR = 'HR'
+}
 @Entity()
 class Employee extends AbstractEntity {
 
@@ -17,6 +22,15 @@ class Employee extends AbstractEntity {
 
     @Column()
     password:string;
+
+
+    @Column({
+      type : 'enum',
+      enum:EmployeeRole,
+      default: EmployeeRole.DEVELOPER
+    })
+    role:EmployeeRole;
+    
 
     @OneToOne(()=>Address,(address)=>address.employee,{
       cascade:true,

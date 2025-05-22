@@ -1,6 +1,7 @@
-import { IsEmail, IsNotEmpty, IsNumber, IsString, MinLength, ValidateNested } from "class-validator";
+import { IsEmail, IsEnum, IsNotEmpty, IsNumber, IsString, MinLength, ValidateNested } from "class-validator";
 import { Type } from "class-transformer";
 import { CreateAddressDto } from "./create-addres.dto";
+import { EmployeeRole } from "../entities/employee.entity";
 
 export class CreateEmployeeDto {
   @IsNotEmpty()
@@ -20,6 +21,8 @@ export class CreateEmployeeDto {
   @MinLength(5)
   password:string;
 
+  @IsEnum(EmployeeRole)
+  role:EmployeeRole;
 
   @ValidateNested()
   @Type(()=>CreateAddressDto)

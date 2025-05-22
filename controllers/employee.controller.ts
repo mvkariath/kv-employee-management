@@ -6,21 +6,25 @@ import { isEmailValid } from "../validators/emailValidator";
 import { CreateEmployeeDto } from "../dto/create-employee.dto";
 import { validate } from "class-validator";
 import { UpdateEmployeeDto } from "../dto/update-employee.dto";
+import {  checkRole } from "../middleware/authorization.middleware";
+import { EmployeeRole } from "../entities/employee.entity";
 
 export class EmployeeController{
     constructor(private employeeService:EmployeeService, router ){
-        router.post('/',this.createEmployee.bind(this));
+        router.post('/',checkRole([EmployeeRole.DEVELOPER,EmployeeRole.HR]),this.createEmployee.bind(this));
         router.get('/',this.getAllEmployees.bind(this));
         // router.get('/:id',this.getEmployeeById, () => {})
         router.get('/:id',this.getEmployeeById)
-        router.patch('/:id',this.updateEmployeeById.bind(this));
-        router.delete('/:id',this.deleteEmployeeById.bind(this));
+        router.patch('/:id',checkRole([EmployeeRole.DEVELOPER,EmployeeRole.HR]),this.updateEmployeeById.bind(this));
+        router.delete('/:id',checkRole([EmployeeRole.DEVELOPER,EmployeeRole.HR]),this.deleteEmployeeById.bind(this));
         router.delete('/remove/:id',this.removeEmployeeById.bind(this));
     }
     async createEmployee(req,res,next){
         try{
+        
         const requiredFields = ['email','name','age','address','password'];
         const data = req.body
+        
         const createEmployeeDto = plainToInstance(CreateEmployeeDto,data);
         const err = await validate(createEmployeeDto); 
     
@@ -33,7 +37,7 @@ export class EmployeeController{
         }
         const fieldsPassed = Object.keys(data)
         if (requiredFields.every(field=>fieldsPassed.includes(field))){
-            const employee = await this.employeeService.createEmployee(createEmployeeDto.name,createEmployeeDto.email,createEmployeeDto.age,createEmployeeDto.password,createEmployeeDto.address);
+            const employee = await this.employeeService.createEmployee(createEmployeeDto.name,createEmployeeDto.email,createEmployeeDto.age,createEmployeeDto.password,createEmployeeDto.role,createEmployeeDto.address);
             res.status(201).send(employee);
         }}
         catch(error){
@@ -43,6 +47,7 @@ export class EmployeeController{
     }
     async getAllEmployees(req,res){
         const employees = await this.employeeService.getAllEmployees();
+        console.log(req.user)
         // const createEmployeeDto = plainToClass()
         if (!employees){
             res.status(400).send({"error":"No employees found"})
