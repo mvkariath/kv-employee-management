@@ -9,8 +9,10 @@ import processTimeMiddleware from "./middleware/processTimeMiddleware";
 import errorMiddleware from "./middleware/errorMiddleware";
 import authRouter from "./routers/auth.router";
 import { authMiddleware } from "./middleware/auth.middleware";
+import { LoggerService } from "./services/logger.services";
 
 const server = express();
+const logger = LoggerService.getInstance('app()')
 
 server.use(express.json());
 server.use(loggerMiddleware);
@@ -27,14 +29,14 @@ server.get("/", (req: Request, res: Response) => {
 (async ()=>{
   try{
     await datasource.initialize();
-    console.log("connected")
+    logger.info('Database connected')
   }
   catch{
-    console.error("Failed");
+    logger.error("Failed");
     process.exit();
   }
   server.listen(3000, () => {
-    console.log("server listening to 3000");
+    logger.info("server listening to 3000");
   });
 })();
 
