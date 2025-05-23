@@ -9,5 +9,12 @@ export class UpdateAddressDto {
   @IsNumber()
   pincode: number;
 
+  @IsString()
+  line2:string
+  
+
+  @IsNumber()
+  houseNo:number;
+
 
 }

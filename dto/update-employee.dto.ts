@@ -13,6 +13,9 @@ export class UpdateEmployeeDto {
   @IsNumber()
   age: number;
 
+  @IsNumber()
+  department_id:number;
+
   @ValidateNested()
   @Type(()=>UpdateAddressDto)
   address:UpdateAddressDto

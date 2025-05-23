@@ -6,24 +6,32 @@ import Employee, { EmployeeRole } from '../entities/employee.entity';
 import EmployeeRepository from '../repositories/employee.repository'
 import HttpException from '../exception/httpException';
 import { LoggerService } from './logger.services';
+import Department from '../entities/department.entity';
+import { DepartmentService } from './department.services';
+import { CreateEmployeeDto } from '../dto/create-employee.dto';
 
 export class EmployeeService{
     private logger = LoggerService.getInstance(EmployeeService.name)
-    constructor(private employeeRepository:EmployeeRepository){
+    constructor(private employeeRepository:EmployeeRepository,private departmentService:DepartmentService){
 
     }
-    async createEmployee(name:string,email:string,age:number,password:string,role:EmployeeRole,address:CreateAddressDto):Promise<Employee>{
-        // const addr = new Address();
-        // addr.line1 = address.line1;
-        // addr.pincode = address.pincode;
+    async createEmployee(newEmployee:CreateEmployeeDto):Promise<Employee>{
         const employee = new Employee();
-        employee.name = name;
-        employee.email = email;
-        employee.age = age;
-        employee.role= role
-        employee.password = await bcrypt.hash(password,10);
+        employee.name = newEmployee.name;
+        employee.email = newEmployee.email;
+        employee.age = newEmployee.age;
+        employee.role= newEmployee.role;
+        employee.status = newEmployee.status;
+        employee.dateOfJoining = new Date(newEmployee.dateOfJoining);
+        employee.experience = newEmployee.experience;
+        employee.employeeId = newEmployee.employeeId;
+        employee.password = await bcrypt.hash(newEmployee.password,10);
 
-        employee.address = address as Address;
+        employee.address = newEmployee.address as Address;
+
+        const department = await this.departmentService.getDepartmentById(newEmployee.department_id)
+        if (!department){throw new HttpException(402,'Department Not Found !!')}
+        employee.department = department;
         return this.employeeRepository.create(employee);
     }
     async getAllEmployees():Promise<Employee[]>{
@@ -36,9 +44,11 @@ export class EmployeeService{
     }
     async updateEmployeeById(empId:number,updateEmployeeDto:UpdateEmployeeDto):Promise<void>{
         const employee = await this.employeeRepository.findOneByID(empId);
+        const department  = await this.departmentService.getDepartmentById(updateEmployeeDto.department_id)
+        if (!department){ throw new HttpException(402,'Department Not found')};
         if (employee){
             if (updateEmployeeDto.address != null){
-                console.log("hello")
+                this.logger.info("We have an employee")
                 if (!employee.address) {
                     employee.address = new Address();   
                 }
@@ -56,10 +66,11 @@ export class EmployeeService{
                 employee.name = updateEmployeeDto.name;
             }
             if (updateEmployeeDto.email){
-                console.log("hello33333")
+                this.logger.info("Employee has email")
                 employee.email = updateEmployeeDto.email;
             }
             employee.updatedAt = new Date();
+            employee.department = department;
             console.log("Modified :",employee);
             await this.employeeRepository.update(empId,employee);
         }

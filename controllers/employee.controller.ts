@@ -15,9 +15,8 @@ export class EmployeeController{
         router.get('/',this.getAllEmployees.bind(this));
         // router.get('/:id',this.getEmployeeById, () => {})
         router.get('/:id',this.getEmployeeById)
-        router.patch('/:id',checkRole([EmployeeRole.DEVELOPER,EmployeeRole.HR]),this.updateEmployeeById.bind(this));
-        router.delete('/:id',checkRole([EmployeeRole.DEVELOPER,EmployeeRole.HR]),this.deleteEmployeeById.bind(this));
-        router.delete('/remove/:id',this.removeEmployeeById.bind(this));
+        router.patch('/:id',checkRole([EmployeeRole.HR]),this.updateEmployeeById.bind(this));
+        router.delete('/:id',checkRole([EmployeeRole.DEVELOPER,EmployeeRole.HR]),this.removeEmployeeById.bind(this));
     }
     async createEmployee(req,res,next){
         try{
@@ -37,7 +36,9 @@ export class EmployeeController{
         }
         const fieldsPassed = Object.keys(data)
         if (requiredFields.every(field=>fieldsPassed.includes(field))){
-            const employee = await this.employeeService.createEmployee(createEmployeeDto.name,createEmployeeDto.email,createEmployeeDto.age,createEmployeeDto.password,createEmployeeDto.role,createEmployeeDto.address);
+            const employee = await this.employeeService.createEmployee(
+                createEmployeeDto
+            );
             res.status(201).send(employee);
         }}
         catch(error){

@@ -10,6 +10,7 @@ import errorMiddleware from "./middleware/errorMiddleware";
 import authRouter from "./routers/auth.router";
 import { authMiddleware } from "./middleware/auth.middleware";
 import { LoggerService } from "./services/logger.services";
+import departmentRouter from "./routers/department.router";
 
 const server = express();
 const logger = LoggerService.getInstance('app()')
@@ -20,6 +21,7 @@ server.use(processTimeMiddleware);
 
 server.use('/login',authRouter)
 server.use("/employee", authMiddleware,employeeRouter);
+server.use("/department", authMiddleware,departmentRouter);
 
 server.use(errorMiddleware);
 

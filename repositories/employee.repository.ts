@@ -1,3 +1,4 @@
+import Department from "../entities/department.entity";
 import Employee from "../entities/employee.entity";
 import { DeleteResult, Repository } from "typeorm";
 
@@ -11,7 +12,8 @@ class EmployeeRepository{
     async findMany():Promise<Employee[]>{
         return this.repository.find({
             relations : {
-                address : true
+                address : true,
+                department:true 
             }
         });
     }
@@ -20,7 +22,8 @@ class EmployeeRepository{
             {
             where: {id: empId},
             relations:{
-                address : true
+                address : true,
+                department:true
             }
             }
         );
@@ -31,15 +34,19 @@ class EmployeeRepository{
     }
 
     async delete(empId:number):Promise<void>{
-        await this.repository.softDelete(empId);
+        await this.repository.delete(empId);
     }
     async remove(employee:Employee):Promise<Employee>{
-        return this.repository.remove(employee);
+        return this.repository.softRemove(employee);
     }
     async findOneByEmail(email:string){
         return this.repository.findOne({
            where:{ email:email},
         })
+    }
+    async updateEmployeeDepartment(employee:Employee,department:Department){
+        const updated_employee :Employee = {...employee,department:department}
+        return this.repository.update(employee.id,updated_employee)
     }
 
 }
