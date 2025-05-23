@@ -4,8 +4,11 @@ import { UpdateEmployeeDto } from '../dto/update-employee.dto';
 import Address from '../entities/address.entity';
 import Employee, { EmployeeRole } from '../entities/employee.entity';
 import EmployeeRepository from '../repositories/employee.repository'
+import HttpException from '../exception/httpException';
+import { LoggerService } from './logger.services';
 
 export class EmployeeService{
+    private logger = LoggerService.getInstance(EmployeeService.name)
     constructor(private employeeRepository:EmployeeRepository){
 
     }
@@ -27,7 +30,9 @@ export class EmployeeService{
         return this.employeeRepository.findMany();
     }
     async getEmployeeById(empId:number):Promise<Employee>{
-        return this.employeeRepository.findOneByID(empId);
+        const employee =  this.employeeRepository.findOneByID(empId);
+        if(!employee)throw new HttpException(402,'Not Found')
+        return employee;
     }
     async updateEmployeeById(empId:number,updateEmployeeDto:UpdateEmployeeDto):Promise<void>{
         const employee = await this.employeeRepository.findOneByID(empId);
