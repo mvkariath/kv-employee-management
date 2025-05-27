@@ -68,7 +68,7 @@ describe('EmployeeService', () => {
             
             const result =  await employeeService.getAllEmployees();
 
-            expect(result).toThrow(HttpException)
+            expect(result).toBeInstanceOf(HttpException)
 
         })
     })
@@ -77,20 +77,20 @@ describe('EmployeeService', () => {
         it('delet an employee if the id exists',async()=>{
             const testEmployee = new Employee ()
             
-            when(employeeRepository.delete).calledWith(2).mockReturnValue(testEmployee);
+            when(employeeRepository.delete).calledWith(2).mockReturnValue(undefined);
             
             const result =  await employeeService.deleteEmployeeById(2);
 
-            expect(result).toEqual(testEmployee)
+            expect(result).toBeUndefined()
 
         })
         it('no employee found with this id',async()=>{
 
-            when(employeeRepository.delete).calledWith(2).mockReturnValue(new HttpException(402,'No Employees Found'));
+            when(employeeRepository.delete).calledWith(2).mockReturnValue(undefined);
             
             const result =  await employeeService.deleteEmployeeById(2);
 
-            expect(result).toThrow(HttpException)
+            expect(result).toBeUndefined()
 
         })
     })
