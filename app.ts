@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import express, { Request, Response } from "express";
 // import employeeRouter from "./employee_router";
 // import loggerMiddleware from "./loggerMiddleware";
